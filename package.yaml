@@ -26,6 +26,7 @@ library:
     - file-embed >= 0.0.15
     - text >= 1.2
     - bytestring >= 0.10
+    - extra
 
 executables:
   aoc2025:

@@ -1,7 +1,7 @@
 module AdventOfCode.Day01.Run where
 
 import AdventOfCode.Day01.Input
-import Text.Read
+import AdventOfCode.Utils
 
 data Rotation = RotateLeft Int | RotateRight Int
   deriving (Show, Eq)
@@ -9,8 +9,6 @@ data Rotation = RotateLeft Int | RotateRight Int
 data RotationState = RotationState Int Int
   deriving (Show, Eq)
 
-parseInt :: String -> Either String Int
-parseInt possibleInt = maybe (Left $ "Invalid integer: " <> possibleInt) Right $ readMaybe possibleInt
 
 parseLine :: String -> Either String Rotation
 parseLine ('L' : n) = RotateLeft <$> parseInt n
