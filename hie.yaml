@@ -1,0 +1,8 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:adventofcode2025"
+    - path: "./app/aoc2025"
+      component: "exe:aoc2025"
+    - path: "./app/runday"
+      component: "exe:runday"

@@ -1,0 +1,41 @@
+name: adventofcode2025
+version: 0.1.0.0
+synopsis: Advent of Code 2025 Solutions
+description: Haskell solutions for Advent of Code 2025
+license: MIT
+author: Your Name
+maintainer: your.email@example.com
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Widentities
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wmissing-home-modules
+  - -Wpartial-fields
+  - -Wredundant-constraints
+
+dependencies:
+  - base >= 4.14 && < 5
+
+library:
+  source-dirs: src
+  # Auto-discover all modules in src/ - no need to list them explicitly
+  dependencies:
+    - file-embed >= 0.0.15
+    - text >= 1.2
+    - bytestring >= 0.10
+
+executables:
+  aoc2025:
+    main: Main.hs
+    source-dirs: app/aoc2025
+    dependencies:
+      - adventofcode2025
+
+  runday:
+    main: Main.hs
+    source-dirs: app/runday
+    dependencies:
+      - adventofcode2025
