@@ -45,6 +45,6 @@ solve :: IO ()
 solve = do
   ranges <- either (error . show) pure parseRanges
   let invalidNumbersPart1 = filter isNumberInvalidPart1 $ concatMap rangeNumbers ranges
-  putStrLn $ "Day 02 (first part): " <> show (sum invalidNumbersPart1)
+  putStrLn $ "Day 02 - 1: " <> show (sum invalidNumbersPart1)
   let invalidNumbersPart2 = filter isNumberInvalidPart2 $ concatMap rangeNumbers ranges
-  putStrLn $ "Day 02 (second part): " <> show (sum invalidNumbersPart2)
+  putStrLn $ "Day 02 - 2: " <> show (sum invalidNumbersPart2)

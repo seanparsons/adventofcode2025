@@ -36,8 +36,8 @@ solve = do
   rotations <- either (error . show) pure rotationsFromInput
   let states = scanl applyRotation (RotationState 50 0) rotations
   let firstPartZeros = length $ filter (\(RotationState stateValue _) -> stateValue == 0) states
-  putStrLn $ "Day 01 (first part): " <> show firstPartZeros
+  putStrLn $ "Day 01 - 1: " <> show firstPartZeros
   let finalState = foldl' applyRotation (RotationState 50 0) rotations
   let (RotationState _ secondPartZeros) = finalState
   -- Answer is greater than 5956 and less than 6344.
-  putStrLn $ "Day 01 (second part): " <> show secondPartZeros
+  putStrLn $ "Day 01 - 2: " <> show secondPartZeros

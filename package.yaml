@@ -15,6 +15,8 @@ ghc-options:
   - -Wmissing-home-modules
   - -Wpartial-fields
   - -Wredundant-constraints
+  - -Wincomplete-patterns
+  - -Werror=incomplete-patterns
 
 dependencies:
   - base >= 4.14 && < 5
@@ -27,6 +29,7 @@ library:
     - text >= 1.2
     - bytestring >= 0.10
     - extra
+    - safe
 
 executables:
   aoc2025:
