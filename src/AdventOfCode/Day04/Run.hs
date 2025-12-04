@@ -70,8 +70,6 @@ removeUntilNoChange positionsSet =
   let newPositionsSet = removeAccessibleRolls positionsSet
   in  if newPositionsSet == positionsSet then positionsSet else removeUntilNoChange newPositionsSet
 
-
-
 solve :: IO ()
 solve = do
   let positionsSet = S.fromList rollPositions
