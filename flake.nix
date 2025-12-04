@@ -11,25 +11,15 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        haskellPackages = pkgs.haskellPackages;
+        haskellPackages = pkgs.haskell.packages.ghc912;
 
         packageName = "adventofcode2025";
-
-        haskellDeps = ps: with ps; [
-          base
-          file-embed
-          text
-          bytestring
-        ];
 
         haskellTools = with haskellPackages; [
           ghc
           cabal-install
           haskell-language-server
-          hlint
-          ghcid
           hpack
-          hoogle
         ];
 
         # Build the Haskell package

@@ -30,6 +30,7 @@ library:
     - bytestring >= 0.10
     - extra
     - safe
+    - unordered-containers
 
 executables:
   aoc2025:
