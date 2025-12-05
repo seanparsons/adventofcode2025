@@ -1,13 +1,7 @@
 module AdventOfCode.Day04.Run where
 
-import Debug.Trace
 import AdventOfCode.Day04.Input
-import AdventOfCode.Utils
 import Data.Monoid
-import Data.Semigroup
-import Data.Maybe
-import Safe
-import Control.Monad
 import qualified Data.HashSet as S
 import Data.List
 
