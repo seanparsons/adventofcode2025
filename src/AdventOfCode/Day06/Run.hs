@@ -68,6 +68,7 @@ combineMaybeOperation :: Maybe Operation -> Maybe Operation -> Maybe Operation
 combineMaybeOperation Nothing Nothing = Nothing
 combineMaybeOperation (Just operation1) Nothing = Just operation1
 combineMaybeOperation Nothing (Just operation2) = Just operation2
+-- This case is a bit of a kludge, but it just means two operators in a column is invalid.
 combineMaybeOperation (Just _) (Just _) = Nothing
 
 instance Semigroup WorkingCalculation where
@@ -92,25 +93,34 @@ isEmptyString "" = True
 isEmptyString stringValue = all isSpace stringValue
 
 parseRowPart2 :: String -> Either String WorkingCalculation
+-- Filter out whitespace as that causes grief, then reverse it so that any operator is the first character.
 parseRowPart2 rowString = parseReversedRowPart2 $ reverse $ filter (not . isSpace) rowString
 
 parseFold :: ([WorkingCalculation], WorkingCalculation) -> String -> Either String ([WorkingCalculation], WorkingCalculation)
 parseFold (calculations, currentCalculation) value =
+      -- If the row is just whitespace, that signifies the gap between calculations.
   let ifEmpty = Right (calculations <> [currentCalculation], mempty)
+      -- If the row is not whitespace, then parse it and add it to the current calculation.
       notEmpty = do
         parsedCalculation <- parseRowPart2 value
         pure (calculations, currentCalculation <> parsedCalculation)
   in  if isEmptyString value then ifEmpty else notEmpty
 
 workingToCalculation :: WorkingCalculation -> Either String Calculation
+-- The only thing this really does is check for the operation.
 workingToCalculation (WorkingCalculation numbers (Just operation)) = pure $ Calculation numbers operation
 workingToCalculation (WorkingCalculation _ Nothing) = Left "Invalid working calculation."
 
 parseRowsPart2 :: [String] -> Either String [Calculation]
 parseRowsPart2 inputRows = do
+  -- Transpose the input so that rows become columns and vice versa.
+  -- Then reverse what were the columns, so that we're reading from right to left.
   let transposedInput = reverse $ transpose inputRows
+  -- Work our way through the columns, building up the calculations as we go.
   (calculations, currentCalculation) <- foldM parseFold ([], mempty) transposedInput
+  -- Add the final calculation to the list of calculations.
   let workingCalculations = calculations <> [currentCalculation]
+  -- Attempt to turn the working calculations into real calculations.
   traverse workingToCalculation workingCalculations
 
 solve :: IO ()
