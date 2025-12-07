@@ -31,6 +31,8 @@ library:
     - extra
     - safe
     - unordered-containers
+    - stm
+    - hashtables
 
 executables:
   aoc2025:
