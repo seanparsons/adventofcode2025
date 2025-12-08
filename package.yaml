@@ -33,6 +33,7 @@ library:
     - unordered-containers
     - stm
     - hashtables
+    - hashable
 
 executables:
   aoc2025:

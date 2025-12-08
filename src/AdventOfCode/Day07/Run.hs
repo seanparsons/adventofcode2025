@@ -3,12 +3,6 @@
 module AdventOfCode.Day07.Run where
 
 import AdventOfCode.Day07.Input
-import AdventOfCode.Utils
-import Data.List.Extra
-import Data.Foldable
-import Data.Char
-import Control.Monad
-import Debug.Trace
 import qualified Data.HashMap.Strict as M
 import Data.Monoid
 import Control.Monad.ST
