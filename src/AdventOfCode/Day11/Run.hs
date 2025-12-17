@@ -1,70 +1,28 @@
 {-# LANGUAGE MultilineStrings #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 
 module AdventOfCode.Day11.Run where
 
 import AdventOfCode.Day11.Input
 import AdventOfCode.Utils
 import Data.List.Extra
-import Data.Foldable
 import Control.Monad
 import qualified Data.HashSet as S
-import Data.Monoid
 import Control.Monad.ST
 import qualified Data.HashTable.ST.Basic as H
 import qualified Data.HashMap.Strict as M
 import Data.Hashable
-import GHC.Generics
-import Text.Megaparsec
-import Data.Either.Extra (mapLeft)
-import Data.Void
-import Text.Megaparsec.Char
-import Text.Megaparsec.Char.Lexer hiding (space)
-import qualified Data.Vector as V
 import Data.Vector.Instances ()
-import Control.Lens hiding ((.>))
-import Data.Semigroup
-import Control.Parallel.Strategies
-import Data.SBV
-import Safe
-import Control.Monad.Extra
-import Debug.Trace
 import Algebra.Graph.AdjacencyIntMap
 import Data.Maybe
 import qualified Data.IntSet as IS
 
-testInput :: String
-testInput = """
-aaa: you hhh
-you: bbb ccc
-bbb: ddd eee
-ccc: ddd eee fff
-ddd: ggg
-eee: out
-fff: out
-ggg: out
-hhh: ccc fff iii
-iii: out
-"""
-
-testInput2 :: String
-testInput2 = """
-svr: aaa bbb
-aaa: fft
-fft: ccc
-bbb: tty
-tty: ccc
-ccc: ddd eee
-ddd: hub
-hub: fff
-eee: dac
-dac: fff
-fff: ggg hhh
-ggg: out
-hhh: out
-"""
-
 type Devices = M.HashMap String [String]
+
+type StringMap = M.HashMap String Int
 
 parseDevice :: String -> Either String (String, [String])
 parseDevice line = case splitOn ": " line of
@@ -78,12 +36,12 @@ parseDevices inputString = do
   devices <- mapM parseDevice $ lines inputString
   return $ M.fromList devices
 
-graphStringsToInts :: Devices -> M.HashMap String Int
+graphStringsToInts :: Devices -> StringMap
 graphStringsToInts devices =
   let allNames = S.fromList $ sort (M.keys devices <> concat (M.elems devices))
   in  M.fromList $ zip (S.toList allNames) [0..]
 
-edgesFromDevices :: Devices -> M.HashMap String Int -> [(Int, Int)]
+edgesFromDevices :: Devices -> StringMap -> [(Int, Int)]
 edgesFromDevices devices stringMap = do
   deviceName <- M.keys devices
   deviceNameNumber <- maybeToList $ M.lookup deviceName stringMap
@@ -92,68 +50,65 @@ edgesFromDevices devices stringMap = do
   deviceOutputNumber <- maybeToList $ M.lookup deviceOutput stringMap
   pure (deviceNameNumber, deviceOutputNumber)
 
-type Part1Table s = H.HashTable s (Int, Int) Int
+type PartTable s stateValues = H.HashTable s (Int, Int, stateValues) Int
 
-findAllPathsPart1 :: Part1Table s -> AdjacencyIntMap -> Int -> Int -> ST s Int
-findAllPathsPart1 partsTable graph current target
-    | current == target = pure 1
+class FindPaths baseValues stateValues where
+  isCurrent :: baseValues -> stateValues -> Int -> Int -> Bool
+  updateStateValues :: baseValues -> stateValues -> Int -> Int -> stateValues
+
+instance FindPaths (Int, Int) (Bool, Bool) where
+  isCurrent _ (visited1, visited2) current target = current == target && visited1 && visited2
+  updateStateValues (midpoint1, midpoint2) (visited1, visited2) current _ = (visited1 || current == midpoint1, visited2 || current == midpoint2)
+
+instance FindPaths () () where
+  isCurrent _ _ current target = current == target
+  updateStateValues _ _ _ _ = ()
+
+findAllPaths :: (FindPaths baseValues stateValues, Hashable stateValues) => baseValues -> PartTable s stateValues -> AdjacencyIntMap -> Int -> Int -> stateValues -> ST s Int
+findAllPaths baseValues partsTable graph current target stateValues
+    | isCurrent baseValues stateValues current target = pure 1
     | otherwise =
-        let neighbours = IS.toList $ postIntSet current graph
-            neighbourFold workingPaths neighbour = (workingPaths +) <$> findAllPathsPart1 partsTable graph neighbour target
+        let newStateValues = updateStateValues baseValues stateValues current target
+            neighbours = IS.toList $ postIntSet current graph
+            neighbourFold workingPaths neighbour = (workingPaths +) <$> findAllPaths baseValues partsTable graph neighbour target newStateValues
             foldValue = foldM neighbourFold 0 neighbours
-        in  lookupFromTableOrDefault partsTable (current, target) foldValue
+        in  lookupFromTableOrDefault partsTable (current, target, newStateValues) foldValue
 
-part1Graph :: Devices -> IO Int
-part1Graph devices = do
+type PartSpecifics baseValues stateValues = Devices -> StringMap -> IO (Int, Int, baseValues, stateValues)
+
+partGraph :: (FindPaths baseValues stateValues, Hashable stateValues) => PartSpecifics baseValues stateValues -> IO Int
+partGraph partSpecifics = do
+  devices <- either (error . show) pure $ parseDevices input
   let stringMap = graphStringsToInts devices
   let deviceEdges = edgesFromDevices devices stringMap
   let graph = edges deviceEdges
-  youNumber <- lookupOrFail stringMap "you"
-  outNumber <- lookupOrFail stringMap "out"
+  (start, end, baseValues, stateValues) <- partSpecifics devices stringMap
   let pathCount = runST $ do
         targetsTable <- H.new
-        findAllPathsPart1 targetsTable graph youNumber outNumber
+        findAllPaths baseValues targetsTable graph start end stateValues
   pure pathCount
 
-type Part2Table s = H.HashTable s (Int, Int, Bool, Bool) Int
+part1Specifics :: PartSpecifics () ()
+part1Specifics _ stringMap = do
+  youNumber <- lookupOrFail stringMap "you"
+  outNumber <- lookupOrFail stringMap "out"
+  pure (youNumber, outNumber, (), ())
 
-findAllPathsPart2 :: Int -> Int -> Part2Table s -> AdjacencyIntMap -> Int -> Int -> Bool -> Bool -> ST s Int
-findAllPathsPart2 midpoint1 midpoint2 partsTable graph current target visited1 visited2
-    | current == target && visited1 && visited2 = pure 1
-    | otherwise =
-        let newVisited1 = visited1 || current == midpoint1
-            newVisited2 = visited2 || current == midpoint2
-            neighbours = IS.toList $ postIntSet current graph
-            neighbourFold workingPaths neighbour = (workingPaths +) <$> findAllPathsPart2 midpoint1 midpoint2 partsTable graph neighbour target newVisited1 newVisited2
-            foldValue = foldM neighbourFold 0 neighbours
-        in  lookupFromTableOrDefault partsTable (current, target, visited1, visited2) foldValue
-
-part2Graph :: Devices -> IO Int
-part2Graph devices = do
-  let stringMap = graphStringsToInts devices
-  let deviceEdges = edgesFromDevices devices stringMap
-  let graph = edges deviceEdges
+part2Specifics :: PartSpecifics (Int, Int) (Bool, Bool)
+part2Specifics _ stringMap = do
   svrNumber <- lookupOrFail stringMap "svr"
   fftNumber <- lookupOrFail stringMap "fft"
   dacNumber <- lookupOrFail stringMap "dac"
   outNumber <- lookupOrFail stringMap "out"
-  let pathCount = runST $ do
-        targetsTable <- H.new
-        findAllPathsPart2 fftNumber dacNumber targetsTable graph svrNumber outNumber False False
-  pure pathCount
+  pure (svrNumber, outNumber, (fftNumber, dacNumber), (False, False))
 
 solvePart1 :: IO Int
-solvePart1 = do
-  devices <- either (error . show) pure $ parseDevices input
-  part1Graph devices
+solvePart1 = partGraph part1Specifics
 
 solvePart2 :: IO Int
-solvePart2 = do
-  devices <- either (error . show) pure $ parseDevices input
-  part2Graph devices
+solvePart2 = partGraph part2Specifics
 
 solve :: IO ()
 solve = do
   presentResult 11 1 solvePart1
   presentResult 11 2 solvePart2
-
