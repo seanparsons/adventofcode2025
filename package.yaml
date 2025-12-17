@@ -17,6 +17,13 @@ ghc-options:
   - -Wredundant-constraints
   - -Wincomplete-patterns
   - -Werror=incomplete-patterns
+  - -O2
+
+flags:
+  prof:
+    description: Enable profiling
+    manual: true
+    default: false
 
 dependencies:
   - base >= 4.14 && < 5
@@ -31,9 +38,20 @@ library:
     - extra
     - safe
     - unordered-containers
+    - containers
     - stm
     - hashtables
     - hashable
+    - time
+    - megaparsec
+    - parser-combinators
+    - vector
+    - lens
+    - parallel
+    - vector-instances
+    - sbv
+    - async
+    - algebraic-graphs
 
 executables:
   aoc2025:
@@ -41,9 +59,25 @@ executables:
     source-dirs: app/aoc2025
     dependencies:
       - adventofcode2025
+    ghc-options:
+      - -rtsopts
+      - -threaded
+    when:
+      - condition: flag(prof)
+        ghc-options:
+          - -fprof-auto
+          - -fprof-cafs
 
   runday:
     main: Main.hs
     source-dirs: app/runday
     dependencies:
       - adventofcode2025
+    ghc-options:
+      - -rtsopts
+      - -threaded
+    when:
+      - condition: flag(prof)
+        ghc-options:
+          - -fprof-auto
+          - -fprof-cafs

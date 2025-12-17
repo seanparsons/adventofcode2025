@@ -22,7 +22,7 @@
           hpack
         ];
 
-        # Build the Haskell package
+        # Build the Haskell package (optional)
         aoc2025 = haskellPackages.developPackage {
           root = ./.;
           name = packageName;
@@ -38,9 +38,10 @@
         };
 
         devShells.default = pkgs.mkShell {
-          buildInputs = haskellTools ++ [ pkgs.zlib ];
+          buildInputs = haskellTools ++ [ pkgs.zlib pkgs.z3 ];
 
-          inputsFrom = [ aoc2025.env ];
+          # Don't pull in package environment - allows shell to work even if package doesn't build
+          # inputsFrom = [ aoc2025.env ];
         };
       }
     );
