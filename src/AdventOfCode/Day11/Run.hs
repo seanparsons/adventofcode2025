@@ -74,7 +74,7 @@ findAllPaths baseValues partsTable graph current target stateValues
             foldValue = foldM neighbourFold 0 neighbours
         in  lookupFromTableOrDefault partsTable (current, target, newStateValues) foldValue
 
-type PartSpecifics baseValues stateValues = Devices -> StringMap -> IO (Int, Int, baseValues, stateValues)
+type PartSpecifics baseValues stateValues = StringMap -> IO (Int, Int, baseValues, stateValues)
 
 partGraph :: (FindPaths baseValues stateValues, Hashable stateValues) => PartSpecifics baseValues stateValues -> IO Int
 partGraph partSpecifics = do
@@ -82,20 +82,20 @@ partGraph partSpecifics = do
   let stringMap = graphStringsToInts devices
   let deviceEdges = edgesFromDevices devices stringMap
   let graph = edges deviceEdges
-  (start, end, baseValues, stateValues) <- partSpecifics devices stringMap
+  (start, end, baseValues, stateValues) <- partSpecifics stringMap
   let pathCount = runST $ do
         targetsTable <- H.new
         findAllPaths baseValues targetsTable graph start end stateValues
   pure pathCount
 
 part1Specifics :: PartSpecifics () ()
-part1Specifics _ stringMap = do
+part1Specifics stringMap = do
   youNumber <- lookupOrFail stringMap "you"
   outNumber <- lookupOrFail stringMap "out"
   pure (youNumber, outNumber, (), ())
 
 part2Specifics :: PartSpecifics (Int, Int) (Bool, Bool)
-part2Specifics _ stringMap = do
+part2Specifics stringMap = do
   svrNumber <- lookupOrFail stringMap "svr"
   fftNumber <- lookupOrFail stringMap "fft"
   dacNumber <- lookupOrFail stringMap "dac"
