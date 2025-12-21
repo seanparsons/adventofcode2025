@@ -48,3 +48,6 @@ mapConcurrentlyBounded f t = do
 
 lookupOrFail :: (Show k, Hashable k) => M.HashMap k v -> k -> IO v
 lookupOrFail hashMap key = maybe (fail $ "Key not found: " <> show key) pure $ M.lookup key hashMap
+
+eitherToIO :: Either String a -> IO a
+eitherToIO = either (error . show) pure
