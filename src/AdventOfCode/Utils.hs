@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 module AdventOfCode.Utils where
 
 import Text.Read (readMaybe)
@@ -51,3 +52,13 @@ lookupOrFail hashMap key = maybe (fail $ "Key not found: " <> show key) pure $ M
 
 eitherToIO :: Either String a -> IO a
 eitherToIO = either (error . show) pure
+
+oddFilter :: Foldable t => (a -> Bool) -> t a -> Bool
+oddFilter predicate =
+  let foldFunction !acc !x = if predicate x then not acc else acc
+  in  foldl' foldFunction False
+
+evenFilter :: Foldable t => (a -> Bool) -> t a -> Bool
+evenFilter predicate =
+  let foldFunction !acc !x = if predicate x then not acc else acc
+  in  foldl' foldFunction True

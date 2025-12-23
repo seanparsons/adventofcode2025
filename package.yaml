@@ -52,6 +52,7 @@ library:
     - sbv
     - async
     - algebraic-graphs
+    - massiv
 
 executables:
   aoc2025:
