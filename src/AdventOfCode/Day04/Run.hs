@@ -4,6 +4,7 @@ import AdventOfCode.Day04.Input
 import Data.Monoid
 import qualified Data.HashSet as S
 import Data.List
+import AdventOfCode.Utils
 
 testInputLines :: [String]
 testInputLines =
@@ -64,11 +65,21 @@ removeUntilNoChange positionsSet =
   let newPositionsSet = removeAccessibleRolls positionsSet
   in  if newPositionsSet == positionsSet then positionsSet else removeUntilNoChange newPositionsSet
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   let positionsSet = S.fromList rollPositions
   let accessiblePositions = getSum $ foldMap (\position -> Sum $ if isAccessible positionsSet position then 1 else 0) rollPositions :: Int
-  putStrLn $ "Day 04 - 1: " <> show accessiblePositions
+  pure accessiblePositions
+
+solvePart2 :: IO Int
+solvePart2 = do
+  let positionsSet = S.fromList rollPositions
   let allAccessibleRemoved = removeUntilNoChange positionsSet
   let changeInRolls = S.size positionsSet - S.size allAccessibleRemoved
-  putStrLn $ "Day 04 - 2: " <> show changeInRolls
+  pure changeInRolls
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 4 1 solvePart1
+  , AOCUncomputedResult 4 2 solvePart2
+  ]

@@ -93,10 +93,20 @@ freshIngredientsFromRanges :: Database -> Int
 freshIngredientsFromRanges (Database dbFreshRanges _) =
   sum $ fmap (\(start, end) -> end - start + 1) dbFreshRanges
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   testDB <- either (error . show) pure (parseLines $ lines input)
   let simplifiedTestDB = simplifyDatabase testDB
-  putStrLn ("Day 05 - 1: " <> show (S.size $ freshIngredients simplifiedTestDB))
-  putStrLn ("Day 05 - 2: " <> show (freshIngredientsFromRanges simplifiedTestDB))
+  pure $ S.size $ freshIngredients simplifiedTestDB
 
+solvePart2 :: IO Int
+solvePart2 = do
+  testDB <- either (error . show) pure (parseLines $ lines input)
+  let simplifiedTestDB = simplifyDatabase testDB
+  pure $ freshIngredientsFromRanges simplifiedTestDB
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 5 1 solvePart1
+  , AOCUncomputedResult 5 2 solvePart2
+  ]

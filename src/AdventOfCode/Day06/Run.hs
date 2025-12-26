@@ -123,11 +123,18 @@ parseRowsPart2 inputRows = do
   -- Attempt to turn the working calculations into real calculations.
   traverse workingToCalculation workingCalculations
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   testInputPart1 <- either (error . show) pure (parseInputPart1 input)
-  putStrLn ("Day 06 - 1: " <> show (calculateInput testInputPart1))
-  --testInputPart2 <- either (error . show) pure (parseRowsPart2 testInput)
+  pure $ calculateInput testInputPart1
+
+solvePart2 :: IO Int
+solvePart2 = do
   testInputPart2 <- either (error . show) pure (parseRowsPart2 $ lines input)
-  putStrLn ("Day 06 - 2: " <> show (calculateInput testInputPart2))
-  
+  pure $ calculateInput testInputPart2
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 6 1 solvePart1
+  , AOCUncomputedResult 6 2 solvePart2
+  ]

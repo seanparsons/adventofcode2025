@@ -53,6 +53,9 @@ library:
     - async
     - algebraic-graphs
     - massiv
+    - array
+    - mtl
+    - data-interval
 
 executables:
   aoc2025:

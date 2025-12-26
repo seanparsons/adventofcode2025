@@ -166,12 +166,24 @@ totalCircuitValue (TaskState _ circuits) =
       threeLargestCircuitSizes = take 3 $ sortBy (comparing Down) circuitSizes
   in  product threeLargestCircuitSizes
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   taskState@(TaskState junctionBoxes _) <- either (error . show) pure $ startingTaskState input
   let distances = getAllDistances junctionBoxes
   let finalPart1State = nextPart1State distances 1000 taskState
-  putStrLn $ "Day 08 - 1: " <> show (totalCircuitValue finalPart1State)
+  pure $ totalCircuitValue finalPart1State
+
+solvePart2 :: IO Int
+solvePart2 = do
+  taskState@(TaskState junctionBoxes _) <- either (error . show) pure $ startingTaskState input
+  let distances = getAllDistances junctionBoxes
+  let finalPart1State = nextPart1State distances 1000 taskState
   let (_, possibleFinalConnection) = nextPart2State distances finalPart1State
   let multipliedXCoords = maybe 0 (\(Connection (JunctionBox x1 _ _) (JunctionBox x2 _ _)) -> x1 * x2) possibleFinalConnection
-  putStrLn $ "Day 08 - 2: " <> show multipliedXCoords
+  pure multipliedXCoords
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 8 1 solvePart1
+  , AOCUncomputedResult 8 2 solvePart2
+  ]

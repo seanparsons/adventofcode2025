@@ -226,10 +226,7 @@ solvePart1 = do
   let regionsThatFit = filter (canRegionFitShapes inputValues) $ inputRegions inputValues
   pure $ length regionsThatFit
 
-solvePart2 :: IO Int
-solvePart2 = pure 0
-
-solve :: IO ()
-solve = do
-  presentResult 12 1 solvePart1
-  presentResult 12 2 solvePart2
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 12 1 solvePart1
+  ]

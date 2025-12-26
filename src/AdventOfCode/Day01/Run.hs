@@ -31,13 +31,22 @@ applyRotation (RotationState x zerosSoFar) (RotateRight n) =
       (newX, newZeros) = if baseX > 99 then fixX baseX 0 else (baseX, 0)
   in  RotationState newX (zerosSoFar + newZeros)
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   rotations <- either (error . show) pure rotationsFromInput
   let states = scanl applyRotation (RotationState 50 0) rotations
   let firstPartZeros = length $ filter (\(RotationState stateValue _) -> stateValue == 0) states
-  putStrLn $ "Day 01 - 1: " <> show firstPartZeros
+  pure firstPartZeros
+
+solvePart2 :: IO Int
+solvePart2 = do
+  rotations <- either (error . show) pure rotationsFromInput
   let finalState = foldl' applyRotation (RotationState 50 0) rotations
   let (RotationState _ secondPartZeros) = finalState
-  -- Answer is greater than 5956 and less than 6344.
-  putStrLn $ "Day 01 - 2: " <> show secondPartZeros
+  pure secondPartZeros
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 1 1 solvePart1
+  , AOCUncomputedResult 1 2 solvePart2
+  ]

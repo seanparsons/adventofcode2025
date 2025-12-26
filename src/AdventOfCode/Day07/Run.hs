@@ -7,6 +7,7 @@ import qualified Data.HashMap.Strict as M
 import Data.Monoid
 import Control.Monad.ST
 import qualified Data.HashTable.ST.Basic as H
+import AdventOfCode.Utils
 
 data BeamSquare = BeamStart | BeamContinue | BeamSplit
   deriving (Show, Eq)
@@ -77,15 +78,24 @@ testInput = """
 ...............
 """
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   beamGrid <- either (error . show) pure $ buildBeamGrid input
   beamStart <- maybe (error "No beam start found.") pure $ findBeamStart beamGrid
-  let part1Splits = runST $ do
-        beamSplitTable <- H.newSized $ M.size beamGrid
-        countSplits Part1 beamGrid beamStart beamSplitTable
-  putStrLn ("Day 07 - 1: " <> show part1Splits)
-  let part2Splits = runST $ do
-        beamSplitTable <- H.newSized $ M.size beamGrid
-        countSplits Part2 beamGrid beamStart beamSplitTable
-  putStrLn ("Day 07 - 2: " <> show part2Splits)
+  pure $ runST $ do
+    beamSplitTable <- H.newSized $ M.size beamGrid
+    countSplits Part1 beamGrid beamStart beamSplitTable
+
+solvePart2 :: IO Int
+solvePart2 = do
+  beamGrid <- either (error . show) pure $ buildBeamGrid input
+  beamStart <- maybe (error "No beam start found.") pure $ findBeamStart beamGrid
+  pure $ runST $ do
+    beamSplitTable <- H.newSized $ M.size beamGrid
+    countSplits Part2 beamGrid beamStart beamSplitTable
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 7 1 solvePart1
+  , AOCUncomputedResult 7 2 solvePart2
+  ]

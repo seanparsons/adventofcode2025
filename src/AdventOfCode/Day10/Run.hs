@@ -209,7 +209,7 @@ applyButtonsIndicators buttonTable target remainingButtons currentIndicators = d
         in  applyButtonsIndicators buttonTable target newRemainingButtons newIndicators
   lookupFromTableOrDefault buttonTable (target, remainingButtons, currentIndicators) (if atGoal then goalResult else subSearch)
 
-solveJoltage :: Buttons -> Joltages -> IO (Maybe Int32)
+solveJoltage :: Buttons -> Joltages -> IO (Maybe Int)
 solveJoltage buttons joltages = do
   let indexedButtons = zip [0..] $ buttonsList buttons :: [(Int, ButtonGroup)]
   let indexedJoltages = zip [0..] $ V.toList joltages :: [(Int, Joltage)]
@@ -242,7 +242,7 @@ solvePart1 = do
   let totalDepth = fmap (getSum . foldMap (Sum . getMin)) (sequence depths)
   maybe (fail "No solution found.") pure totalDepth
 
-solvePart2 :: IO Int32
+solvePart2 :: IO Int
 solvePart2 = do
   machines <- either (error . show) pure $ parseInput input
   listOfMaybeDepths <- mapConcurrentlyBounded (\(Machine _ buttons joltages) -> solveJoltage buttons joltages) machines
@@ -250,7 +250,8 @@ solvePart2 = do
   let totalDepth = fmap sum depths
   maybe (fail "No solution found.") pure totalDepth
 
-solve :: IO ()
-solve = do
-  presentResult 10 1 solvePart1
-  presentResult 10 2 solvePart2
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 10 1 solvePart1
+  , AOCUncomputedResult 10 2 solvePart2
+  ]

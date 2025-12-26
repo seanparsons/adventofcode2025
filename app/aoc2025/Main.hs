@@ -12,22 +12,9 @@ import qualified AdventOfCode.Day09.Run as Day09
 import qualified AdventOfCode.Day10.Run as Day10
 import qualified AdventOfCode.Day11.Run as Day11
 import qualified AdventOfCode.Day12.Run as Day12
+import AdventOfCode.Utils
 
 main :: IO ()
 main = do
-  putStrLn "=== Advent of Code 2025 ==="
-  putStrLn ""
-  Day01.solve
-  Day02.solve
-  Day03.solve
-  Day04.solve
-  Day05.solve
-  Day06.solve
-  Day07.solve
-  Day08.solve
-  Day09.solve
-  Day10.solve
-  Day11.solve
-  Day12.solve
-  putStrLn ""
-  putStrLn "=== All days completed ==="
+  let allDays = concat [Day01.solve, Day02.solve, Day03.solve, Day04.solve, Day05.solve, Day06.solve, Day07.solve, Day08.solve, Day09.solve, Day10.solve, Day11.solve, Day12.solve]
+  presentResults allDays

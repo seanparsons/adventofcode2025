@@ -47,10 +47,18 @@ pickLargest n bank' =
 maxJoltagePart2 :: Int -> Bank -> Int
 maxJoltagePart2 n (Bank bank) = foldl' (\acc d -> acc * 10 + d) 0 (pickLargest n bank)
 
-solve :: IO ()
-solve = do
+solvePart1 :: IO Int
+solvePart1 = do
   banks <- either (error . show) pure banksFromInput
-  let totalJoltagePart1 = sum $ fmap maxJoltagePart1 banks
-  putStrLn $ "Day 03 - 1: " <> show totalJoltagePart1
-  let totalJoltagePart2 = getSum $ foldMap Sum $ fmap (maxJoltagePart2 12) banks
-  putStrLn $ "Day 03 - 2: " <> show totalJoltagePart2
+  pure $ sum $ fmap maxJoltagePart1 banks
+
+solvePart2 :: IO Int
+solvePart2 = do
+  banks <- either (error . show) pure banksFromInput
+  pure $ getSum $ foldMap Sum $ fmap (maxJoltagePart2 12) banks
+
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 3 1 solvePart1
+  , AOCUncomputedResult 3 2 solvePart2
+  ]

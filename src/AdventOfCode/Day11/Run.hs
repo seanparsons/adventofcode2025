@@ -108,7 +108,8 @@ solvePart1 = partGraph part1Specifics
 solvePart2 :: IO Int
 solvePart2 = partGraph part2Specifics
 
-solve :: IO ()
-solve = do
-  presentResult 11 1 solvePart1
-  presentResult 11 2 solvePart2
+solve :: [AOCUncomputedResult]
+solve =
+  [ AOCUncomputedResult 11 1 solvePart1
+  , AOCUncomputedResult 11 2 solvePart2
+  ]
