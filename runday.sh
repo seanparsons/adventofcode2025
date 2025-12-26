@@ -7,7 +7,7 @@ hpack
 
 # Build and run with CPU profiling enabled
 echo "Building with profiling enabled..."
-cabal build --enable-profiling --flags=prof runday
+cabal build -j --enable-profiling --flags=prof runday
 
 # Run the Advent of Code 2025 project with profiling and multiple cores
 echo "Running with CPU profiling..."

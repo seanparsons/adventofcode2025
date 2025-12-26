@@ -3,10 +3,8 @@ module AdventOfCode.Day06.Run where
 import AdventOfCode.Day06.Input
 import AdventOfCode.Utils
 import Data.List.Extra
-import Data.Foldable
 import Data.Char
 import Control.Monad
-import Debug.Trace
 
 data Operation = OpMul | OpAdd
   deriving (Show, Eq)

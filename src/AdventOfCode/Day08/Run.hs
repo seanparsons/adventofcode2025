@@ -7,42 +7,10 @@ module AdventOfCode.Day08.Run where
 import AdventOfCode.Day08.Input
 import AdventOfCode.Utils
 import Data.List.Extra
-import Data.Foldable
-import Data.Char
-import Control.Monad
-import Debug.Trace
-import qualified Data.HashMap.Strict as M
 import qualified Data.HashSet as S
-import Data.Monoid
-import Control.Monad.ST
-import qualified Data.HashTable.ST.Basic as H
 import Data.Hashable
 import GHC.Generics
 import Data.Ord
-
-testInput :: String
-testInput = """
-162,817,812
-57,618,57
-906,360,560
-592,479,940
-352,342,300
-466,668,158
-542,29,236
-431,825,988
-739,650,466
-52,470,668
-216,146,977
-819,987,18
-117,168,530
-805,96,715
-346,949,466
-970,615,88
-941,993,340
-862,61,35
-984,92,344
-425,690,689
-"""
 
 data JunctionBox = JunctionBox Int Int Int
   deriving (Show, Eq, Ord, Generic)

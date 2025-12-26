@@ -8,7 +8,7 @@ hpack
 
 # Build and run with CPU profiling enabled
 echo "Building..."
-cabal build aoc2025
+cabal build -j aoc2025
 
 # Run the Advent of Code 2025 project with multiple cores
 echo "Running..."

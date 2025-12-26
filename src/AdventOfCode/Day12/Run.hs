@@ -11,19 +11,12 @@ module AdventOfCode.Day12.Run where
 import AdventOfCode.Day12.Input
 import AdventOfCode.Utils
 import Data.List.Extra
-import Control.Monad
 import qualified Data.HashSet as S
-import Control.Monad.ST
-import qualified Data.HashTable.ST.Basic as H
 import qualified Data.HashMap.Strict as M
 import Data.Hashable
 import Data.Vector.Instances ()
-import Algebra.Graph.AdjacencyIntMap
 import Data.Maybe
-import qualified Data.IntSet as IS
-import Debug.Trace
 import GHC.Generics
-import Data.Monoid
 
 testInput :: String
 testInput = """

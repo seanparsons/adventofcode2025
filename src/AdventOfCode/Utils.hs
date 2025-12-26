@@ -8,7 +8,6 @@ import Text.Printf (printf)
 import Data.Hashable
 import qualified Data.HashTable.ST.Basic as H
 import Control.Monad.ST
-import Debug.Trace
 import Control.Concurrent.Async
 import Control.Concurrent.QSem
 import Control.Exception (bracket_)

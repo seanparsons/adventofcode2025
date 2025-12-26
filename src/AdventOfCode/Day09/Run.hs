@@ -17,32 +17,6 @@ import qualified Data.IntervalMap.Strict as IVM
 import qualified Data.IntervalSet as IS
 import qualified Data.Interval as DI
 
-testInput :: String
-testInput = """
-7,1
-11,1
-11,7
-9,7
-9,5
-2,5
-2,3
-7,3
-"""
-
-testInput2 :: String
-testInput2 = """
-7,1
-11,1
-11,7
-9,7
-9,5
-6,5
-6,7
-2,7
-2,3
-7,3
-"""
-
 type Point = (Int, Int)
 
 type Rectangle = (Point, Point)

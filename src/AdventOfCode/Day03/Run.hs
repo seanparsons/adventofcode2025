@@ -1,13 +1,8 @@
 module AdventOfCode.Day03.Run where
 
-import Debug.Trace
 import AdventOfCode.Day03.Input
 import AdventOfCode.Utils
 import Data.Monoid
-import Data.Semigroup
-import Data.Maybe
-import Safe
-import Control.Monad
 
 data Bank = Bank [Int]
   deriving (Show, Eq)
@@ -32,7 +27,7 @@ maxJoltagePart1 (Bank banks) = maxJoltageFromBatteriesPart1 banks
 maxWithPos :: [Int] -> (Int, Int)
 maxWithPos bank =
   foldl'
-    (\(max, pos) (curr, pos') -> if curr > max then (curr, pos') else (max, pos))
+    (\(workingMax, pos) (curr, pos') -> if curr > workingMax then (curr, pos') else (workingMax, pos))
     (0, 0)
     (zip bank [0 ..])
 
